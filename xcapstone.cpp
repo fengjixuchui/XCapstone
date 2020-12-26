@@ -26,7 +26,7 @@
 #endif
 #endif
 
-XCapstone::XCapstone(QObject *parent) : QObject(parent)
+XCapstone::XCapstone(QObject *pParent) : QObject(pParent)
 {
 
 }
@@ -35,22 +35,19 @@ QString XCapstone::disasm(csh handle, qint64 nAddress, char *pData, int nDataSiz
 {
     QString sResult;
 
-    cs_insn *insn;
+    cs_insn *pInsn=0;
 
-    int count=cs_disasm(handle,(uint8_t *)pData,nDataSize,nAddress,1,&insn);
-    if(count>0)
+    int nNumberOfOpcodes=cs_disasm(handle,(uint8_t *)pData,nDataSize,nAddress,1,&pInsn);
+    if(nNumberOfOpcodes>0)
     {
-        QString sMnemonic=insn->mnemonic;
-        QString sStr=insn->op_str;
+        QString sMnemonic=pInsn->mnemonic;
+        QString sStr=pInsn->op_str;
 
         sResult+=sMnemonic;
 
-        if(sStr!="")
-        {
-            sResult+=QString(" %1").arg(sStr);
-        }
+        if(sStr!="") sResult+=QString(" %1").arg(sStr);
 
-        cs_free(insn, count);
+        cs_free(pInsn, nNumberOfOpcodes);
     }
 
     return sResult;
